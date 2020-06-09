@@ -18,6 +18,9 @@ psycopg2-binary = "*"
 sqlalchemy = "*"
 wtforms = "*"
 flask-wtf = "*"
+python-jose = "*"
+flask-cors = "*"
+six = "*"
 
 [requires]
 python_version = "3.8"
