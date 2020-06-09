@@ -10,9 +10,10 @@ bp = Blueprint('users', __name__, url_prefix="")
 @cross_origin(headers=["Content-Type", "Authorization"])
 def user():
     users = User.query.all()
+    all_users = []
     for user in users:
-        print(f"{user}")
-    return jsonify("hello")
+        all_users.append(user.to_dict())
+    return jsonify(all_users)
 
 
 @bp.route('/users', methods=['POST'])
