@@ -1,8 +1,9 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 
-bp = Blueprint('main', __name__, '')
+bp = Blueprint('main', __name__, url_prefix='')
 
 
 @bp.route('/')
 def main_page():
-    return 'Hello World'
+    response = "Hello World"
+    return jsonify(message=response)
