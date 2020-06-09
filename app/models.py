@@ -3,6 +3,21 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+class Run(db.Model):
+    __tablename__ = "runs"
+
+    id = db.Column(db.Integer, primary_key=True)
+    distance = db.Column(db.Float)
+    time = db.Column(db.Integer)
+    date = db.Column(db.DateTime)
+    calories = db.Column(db.Float)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    route_id = db.Column(db.Integer, db.ForeignKey('routes.id'))
+
+    users = db.relationship('User', back_populates='runs')
+    routes = db.relationship('Route', back_populates='runs')
+
+
 class Route(db.Model):
     __tablename__ = 'routes'
 
@@ -15,6 +30,7 @@ class Route(db.Model):
         db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     creator = db.relationship('User', back_populates='routes')
+    runs = db.relationship('Run', back_populates='routes')
 
 
 class User(db.Model):
@@ -29,3 +45,4 @@ class User(db.Model):
     weight = db.Column(db.Integer)
 
     routes = db.relationship('Route', back_populates='creator')
+    runs = db.relationship('Run', back_populates='users')
