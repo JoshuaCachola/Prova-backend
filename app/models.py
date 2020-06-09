@@ -38,9 +38,8 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     username = db.Column(db.String, nullable=False)
-    first_name = db.Column(db.String, nullable=False)
-    last_name = db.Column(db.String, nullable=False)
-    hashed_password = db.Column(db.String, nullable=False)
+    first_name = db.Column(db.String)
+    last_name = db.Column(db.String)
     email = db.Column(db.String, nullable=False)
     weight = db.Column(db.Integer)
 

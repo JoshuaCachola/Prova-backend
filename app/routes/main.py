@@ -1,8 +1,12 @@
-from flask import Blueprint, jsonify, request
-from flask_cors import cross_origin
+from flask import Blueprint, jsonify
 from ..models import Route
+from flask_cors import cross_origin
+from flask import Blueprint, jsonify, request
+<< << << < HEAD
+== == == =
+>>>>>> > a46d7a84604d3be3b3eb8c6e72f3eee76ad623cf
 
-bp = Blueprint('main', __name__, '')
+bp = Blueprint('main', __name__, url_prefix='')
 
 
 @bp.route('/')
