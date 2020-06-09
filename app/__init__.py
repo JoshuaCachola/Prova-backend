@@ -8,7 +8,6 @@ from .auth import AuthError, requires_auth
 from .models import db, User, Route
 
 
-
 app = Flask(__name__)
 app.config.from_object(Configuration)
 app.register_blueprint(main.bp)
