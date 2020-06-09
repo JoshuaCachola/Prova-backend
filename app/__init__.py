@@ -3,8 +3,9 @@ from flask_cors import cross_origin, CORS
 from flask_migrate import Migrate
 from .config import Configuration
 from .routes import main
-from .models import db
 from .auth import AuthError, requires_auth
+from .models import db, User, Route
+
 
 app = Flask(__name__)
 app.config.from_object(Configuration)
