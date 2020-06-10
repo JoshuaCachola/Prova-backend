@@ -16,7 +16,8 @@ def main_page():
 @cross_origin(headers=["Content-Type", "Authorization"])
 def get_my_routes(user_id):
     my_routes = Route.query.filter(Route.creatorId == user_id).all()
-    return jsonify(my_routes)
+    dict_routes = [route.to_dict() for route in my_routes]
+    return jsonify(dict_routes)
 
 
 @bp.route('/routes', methods=['POST'])
