@@ -32,17 +32,29 @@ class Route(db.Model):
     creator = db.relationship('User', back_populates='routes')
     runs = db.relationship('Run', back_populates='routes')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'distance': self.distance,
+            'average_time': self.average_time,
+            'best_time': self.best_time,
+            'coordinates': self.coordinates,
+            'creatorId': self.creatorId
+        }
+
 
 class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     username = db.Column(db.String, nullable=False)
-    first_name = db.Column(db.String, nullable=False)
-    last_name = db.Column(db.String, nullable=False)
-    hashed_password = db.Column(db.String, nullable=False)
+    first_name = db.Column(db.String)
+    last_name = db.Column(db.String)
     email = db.Column(db.String, nullable=False)
     weight = db.Column(db.Integer)
 
     routes = db.relationship('Route', back_populates='creator')
     runs = db.relationship('Run', back_populates='users')
+
+    def to_dict(self):
+        return {"id": self.id, "username": self.username, "first_name": self.first_name, "email": self.email, "weight": self.weight}
