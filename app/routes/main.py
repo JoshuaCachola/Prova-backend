@@ -1,10 +1,8 @@
 from flask import Blueprint, jsonify
-from ..models import Route
+from ..models import db, Route
 from flask_cors import cross_origin
 from flask import Blueprint, jsonify, request
-<< << << < HEAD
-== == == =
->>>>>> > a46d7a84604d3be3b3eb8c6e72f3eee76ad623cf
+
 
 bp = Blueprint('main', __name__, url_prefix='')
 
@@ -25,5 +23,20 @@ def get_my_routes(user_id):
 @cross_origin(headers=["Content-Type", "Authorization"])
 def post_route():
     data = request.json
-    print(data)
+    new_route = Route(
+        distance=data['distance'],
+        average_time=data['averageTime'],
+        best_time=data['bestTime'],
+        coordinates=data['coordinates'],
+        creatorId=data['creatorId']
+    )
+    db.session.add(new_route)
+    db.session.commit()
     return jsonify(data)
+
+
+@bp.route('/routes/<route_id>')
+@cross_origin(headers=["Content-Type", "Authorization"])
+def get_a_route(route_id):
+    route = Route.query.get(route_id)
+    return jsonify(route.to_dict())
