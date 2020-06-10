@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 from ..auth import requires_auth
 from flask_cors import cross_origin
-from ..models import db, User
+from ..models import db, User, Run
+
 
 bp = Blueprint('users', __name__, url_prefix="")
 
@@ -29,5 +30,14 @@ def create_user():
         new_user = User(email=data['email'], username=data['username'])
         db.session.add(new_user)
         db.session.commit()
-        new = {"userId": new_user.id, "email": new_user.email, "username": new_user.username}
+        new = {"userId": new_user.id, "email": new_user.email,
+               "username": new_user.username}
         return new
+
+
+@bp.route('/users/<user_id>/runs')
+@cross_origin(headers=['Content-Type', 'Authorization'])
+def get_runs():
+    queried_runs = Run.query.filter_by(Run.user_id == user_id)
+    runs = [run.to_dict for run in queried_runs]
+    return jsonify(runs)

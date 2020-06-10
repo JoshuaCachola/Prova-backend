@@ -1,4 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy  # noqa
 
 db = SQLAlchemy()
 
@@ -16,6 +16,17 @@ class Run(db.Model):
 
     users = db.relationship('User', back_populates='runs')
     routes = db.relationship('Route', back_populates='runs')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'distance': self.distance,
+            'time': self.time,
+            'date': self.date,
+            'calories': self.calories,
+            'user_id': self.user_id,
+            'route_id': self.route_id
+        }
 
 
 class Route(db.Model):
@@ -57,4 +68,10 @@ class User(db.Model):
     runs = db.relationship('Run', back_populates='users')
 
     def to_dict(self):
-        return {"id": self.id, "username": self.username, "first_name": self.first_name, "email": self.email, "weight": self.weight}
+        return {
+            'id': self.id,
+            'username': self.username,
+            'first_name': self.first_name,
+            'email': self.email,
+            'weight': self.weight
+        }
