@@ -3,7 +3,6 @@ from ..models import db, Route
 from flask_cors import cross_origin
 from flask import Blueprint, jsonify, request
 
-
 bp = Blueprint('main', __name__, url_prefix='')
 
 

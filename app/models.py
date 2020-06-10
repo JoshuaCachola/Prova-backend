@@ -55,3 +55,6 @@ class User(db.Model):
 
     routes = db.relationship('Route', back_populates='creator')
     runs = db.relationship('Run', back_populates='users')
+
+    def to_dict(self):
+        return {"id": self.id, "username": self.username, "first_name": self.first_name, "email": self.email, "weight": self.weight}
