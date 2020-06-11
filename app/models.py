@@ -1,4 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy  # noqa
 
 db = SQLAlchemy()
 
@@ -7,15 +7,26 @@ class Run(db.Model):
     __tablename__ = "runs"
 
     id = db.Column(db.Integer, primary_key=True)
-    distance = db.Column(db.Float)
-    time = db.Column(db.Integer)
-    date = db.Column(db.DateTime)
-    calories = db.Column(db.Float)
+    distance = db.Column(db.Float, nullable=False)
+    time = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
+    calories = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     route_id = db.Column(db.Integer, db.ForeignKey('routes.id'))
 
     users = db.relationship('User', back_populates='runs')
     routes = db.relationship('Route', back_populates='runs')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'distance': self.distance,
+            'time': self.time,
+            'date': self.date,
+            'calories': self.calories,
+            'user_id': self.user_id,
+            'route_id': self.route_id
+        }
 
 
 class Route(db.Model):
@@ -64,11 +75,12 @@ class User(db.Model):
 
     def to_dict(self):
         return {
-            "id": self.id,
-            "username": self.username,
-            "first_name": self.first_name,
-            "email": self.email,
-            "weight": self.weight
+            'id': self.id,
+            'username': self.username,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'weight': self.weight
         }
 
 
