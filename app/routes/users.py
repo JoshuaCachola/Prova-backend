@@ -43,9 +43,9 @@ def create_user():
         return new
 
 
-@bp.route('/users/<user_id>/runs')
+@bp.route('/users/<int:user_id>/runs')
 @cross_origin(headers=['Content-Type', 'Authorization'])
-def get_runs():
-    queried_runs = Run.query.filter_by(Run.user_id == user_id)
+def get_runs(user_id):
+    queried_runs = Run.query.filter_by(user_id=user_id).order_by(Run.date)
     runs = [run.to_dict for run in queried_runs]
     return jsonify(runs)
