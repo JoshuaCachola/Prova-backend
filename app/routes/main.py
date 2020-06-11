@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
-from ..models import db, Route
+from sqlalchemy import and_
+from ..models import db, Route, PersonalRouteStat
 from flask_cors import cross_origin
 from flask import Blueprint, jsonify, request
 
@@ -25,8 +26,9 @@ def post_route():
     data = request.json
     new_route = Route(
         distance=data['distance'],
-        average_time=data['averageTime'],
-        best_time=data['bestTime'],
+        average_time=None,
+        best_time=None,
+        total_number_of_runs=0,
         coordinates=data['coordinates'],
         creatorId=data['creatorId']
     )
@@ -35,8 +37,24 @@ def post_route():
     return jsonify(data)
 
 
-@bp.route('/routes/<route_id>')
+@bp.route('/routes/<route_id>', methods=['PUT'])
 @cross_origin(headers=["Content-Type", "Authorization"])
 def get_a_route(route_id):
+    data = request.json
+    user_id = data['userId']
     route = Route.query.get(route_id)
-    return jsonify(route.to_dict())
+    personal_stats_entry = PersonalRouteStat.query.filter(
+        and_(PersonalRouteStat.route_id == route_id, PersonalRouteStat.user_id == user_id)).first()
+    if personal_stats_entry:
+        return jsonify(route.to_dict(), personal_stats_entry.to_dict())
+    else:
+        new_personal_stats_entry = PersonalRouteStat(
+            route_id=route_id,
+            user_id=user_id,
+            best_time=0,
+            average_time=0,
+            number_of_runs=0
+        )
+        db.session.add(new_personal_stats_entry)
+        db.session.commit()
+        return jsonify(route.to_dict(), new_personal_stats_entry.to_dict())
