@@ -20,6 +20,13 @@ def get_my_routes(user_id):
     return jsonify(dict_routes)
 
 
+@bp.route('/users/<user_id>/latest_route')
+@cross_origin(headers=["Content-Type", "Authorization"])
+def latest_route(user_id):
+    latest = Route.query.order_by(Route.id.desc()).first()
+    return jsonify(latest.to_dict())
+
+
 @bp.route('/routes', methods=['POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
 def post_route():
