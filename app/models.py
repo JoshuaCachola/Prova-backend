@@ -17,6 +17,17 @@ class Run(db.Model):
     users = db.relationship('User', back_populates='runs')
     routes = db.relationship('Route', back_populates='runs')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'distance': self.distance,
+            'time': self.time,
+            'date': self.date,
+            'calories': self.calories,
+            'user_id': self.user_id,
+            'route_id': self.route_id
+        }
+
 
 class Route(db.Model):
     __tablename__ = 'routes'
@@ -27,6 +38,7 @@ class Route(db.Model):
     best_time = db.Column(db.Integer)
     coordinates = db.Column(db.Text, nullable=False)
     total_number_of_runs = db.Column(db.Integer, nullable=False)
+    directions = db.Column(db.Text)
     creatorId = db.Column(
         db.Integer, db.ForeignKey('users.id'), nullable=False)
 

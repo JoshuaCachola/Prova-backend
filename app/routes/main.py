@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 from sqlalchemy import and_
-from ..models import db, Route, PersonalRouteStat
+from ..models import db, Route, PersonalRouteStat, Run
 from flask_cors import cross_origin
 from flask import Blueprint, jsonify, request
 
@@ -43,18 +43,20 @@ def get_a_route(route_id):
     data = request.json
     user_id = data['userId']
     route = Route.query.get(route_id)
+    runs_for_route = Run.query.filter(Run.route_id == route_id).all()
+    runs = [run.to_dict() for run in runs_for_route]
     personal_stats_entry = PersonalRouteStat.query.filter(
         and_(PersonalRouteStat.route_id == route_id, PersonalRouteStat.user_id == user_id)).first()
     if personal_stats_entry:
-        return jsonify(route.to_dict(), personal_stats_entry.to_dict())
+        return jsonify(route.to_dict(), personal_stats_entry.to_dict(), runs)
     else:
         new_personal_stats_entry = PersonalRouteStat(
             route_id=route_id,
             user_id=user_id,
-            best_time=0,
-            average_time=0,
+            best_time=None,
+            average_time=None,
             number_of_runs=0
         )
         db.session.add(new_personal_stats_entry)
         db.session.commit()
-        return jsonify(route.to_dict(), new_personal_stats_entry.to_dict())
+        return jsonify(route.to_dict(), new_personal_stats_entry.to_dict(), runs)
