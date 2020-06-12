@@ -47,5 +47,16 @@ def create_user():
 @cross_origin(headers=['Content-Type', 'Authorization'])
 def get_runs(user_id):
     queried_runs = Run.query.filter_by(user_id=user_id).order_by(Run.date)
-    runs = [run.to_dict for run in queried_runs]
+    runs = [run.to_dict() for run in queried_runs]
     return jsonify(runs)
+
+
+@bp.route('/users/<int:user_id>/runs', methods=['POST'])
+@cross_origin(headers=['Content-Type', 'Authorization'])
+def add_run(user_id):
+    data = request.json
+    new_run = Run(**data)
+    db.session.add(new_run)
+    db.session.commit()
+    new_run = new_run.to_dict()
+    return new_run
