@@ -55,7 +55,14 @@ def get_runs(user_id):
 @cross_origin(headers=['Content-Type', 'Authorization'])
 def add_run(user_id):
     data = request.json
-    new_run = Run(**data)
+    time = data['time'].split("'")
+    convert_time = (int(time[0]) * 60) + int(time[1])
+    new_run = Run(date=data['date'],
+                  distance=data['distance'],
+                  time=convert_time,
+                  calories=data['calories'],
+                  user_id=user_id,
+                  route_id=data['routeId'])
     db.session.add(new_run)
     db.session.commit()
     new_run = new_run.to_dict()
