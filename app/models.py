@@ -38,6 +38,7 @@ class Route(db.Model):
     best_time = db.Column(db.Integer)
     coordinates = db.Column(db.Text, nullable=False)
     total_number_of_runs = db.Column(db.Integer, nullable=False)
+    directions = db.Column(db.Text)
     creatorId = db.Column(
         db.Integer, db.ForeignKey('users.id'), nullable=False)
 
