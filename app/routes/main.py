@@ -37,7 +37,8 @@ def post_route():
         best_time=None,
         total_number_of_runs=0,
         coordinates=data['coordinates'],
-        creatorId=data['creatorId']
+        creatorId=data['creatorId'],
+        directions=data['directions']
     )
     db.session.add(new_route)
     db.session.commit()
