@@ -55,7 +55,8 @@ class Route(db.Model):
             'best_time': self.best_time,
             'coordinates': self.coordinates,
             'total_number_of_runs': self.total_number_of_runs,
-            'creatorId': self.creatorId
+            'creatorId': self.creatorId,
+            'directions': self.directions
         }
 
 
