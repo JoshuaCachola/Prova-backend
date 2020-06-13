@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
+from sqlalchemy import and_
 from ..auth import requires_auth
 from flask_cors import cross_origin
-from ..models import db, User, Run
+from ..models import db, User, Run, Route, PersonalRouteStat
 
 
 bp = Blueprint('users', __name__, url_prefix="")
@@ -64,6 +65,42 @@ def add_run(user_id):
                   user_id=user_id,
                   route_id=data['routeId'])
     db.session.add(new_run)
+    db.session.commit()
+
+    route_for_run = Route.query.filter(Route.id == new_run.route_id).first()
+
+    if not route_for_run.best_time:
+        route_for_run.best_time = new_run.time
+    elif new_run.time < route_for_run.best_time:
+        route_for_run.best_time = new_run.time
+    route_for_run.total_number_of_runs += 1
+
+    if not route_for_run.average_time:
+        route_for_run.average_time = new_run.time
+    else:
+        new_average = (route_for_run.average_time * (route_for_run.total_number_of_runs -
+                                                     1) + new_run.time) / route_for_run.total_number_of_runs
+        route_for_run.average_time = new_average
+    db.session.add(route_for_run)
+
+    personal_route_stats = PersonalRouteStat.query.filter(and_(
+        PersonalRouteStat.user_id == user_id, PersonalRouteStat.route_id == new_run.route_id)).first()
+
+    if not personal_route_stats.best_time:
+        personal_route_stats.best_time = new_run.time
+    elif new_run.time < personal_route_stats.best_time:
+        personal_route_stats.best_time = new_run.time
+    personal_route_stats.number_of_runs += 1
+
+    if not personal_route_stats.average_time:
+        personal_route_stats.average_time = new_run.time
+    else:
+        new_average = (personal_route_stats.average_time * (personal_route_stats.number_of_runs -
+                                                            1) + new_run.time) / personal_route_stats.number_of_runs
+        personal_route_stats.average_time = new_average
+
+    db.session.add(personal_route_stats)
+
     db.session.commit()
     new_run = new_run.to_dict()
     return new_run

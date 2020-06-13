@@ -33,12 +33,14 @@ class Route(db.Model):
     __tablename__ = 'routes'
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
+    name = db.Column(db.String)
     distance = db.Column(db.Float, nullable=False)
     average_time = db.Column(db.Integer)
     best_time = db.Column(db.Integer)
     coordinates = db.Column(db.Text, nullable=False)
     total_number_of_runs = db.Column(db.Integer, nullable=False)
     directions = db.Column(db.Text)
+    image = db.Column(db.Text)
     creatorId = db.Column(
         db.Integer, db.ForeignKey('users.id'), nullable=False)
 
@@ -50,13 +52,15 @@ class Route(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
+            'name': self.name,
             'distance': self.distance,
             'average_time': self.average_time,
             'best_time': self.best_time,
             'coordinates': self.coordinates,
             'total_number_of_runs': self.total_number_of_runs,
             'creatorId': self.creatorId,
-            'directions': self.directions
+            'directions': self.directions,
+            'image': self.image
         }
 
 
