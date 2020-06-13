@@ -7,6 +7,7 @@ from .models import db, Run, Route, User, PersonalRouteStat
 from .auth import AuthError, requires_auth
 
 
+# def create_app():
 app = Flask(__name__)
 app.config.from_object(Configuration)
 app.register_blueprint(main.bp)
@@ -22,19 +23,23 @@ def handle_auth_error(ex):
     response.status_code = ex.status_code
     return response
 
-
 # This doesn't need authentication
+
+
 @app.route("/api/public")
 @cross_origin(headers=["Content-Type", "Authorization"])
 def public():
     response = "Hello from a public endpoint! You don't need to be authenticated to see this."
     return jsonify(message=response)
 
-
 # This needs authentication
+
+
 @app.route("/api/private")
 @cross_origin(headers=["Content-Type", "Authorization"])
 @requires_auth
 def private():
     response = "Hello from a private endpoint! You need to be authenticated to see this."
     return jsonify(message=response)
+
+    # return app
