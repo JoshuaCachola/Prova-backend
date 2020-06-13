@@ -56,7 +56,8 @@ def get_runs(user_id):
 def add_run(user_id):
     data = request.json
     time = data['time'].split("'")
-    convert_time = (int(time[0]) * 60) + int(time[1])
+    convert_time = (int(time[0]) * 60) + int(time[1]
+                                             ) if time.length > 1 else int(time[0] * 60)
     new_run = Run(date=data['date'],
                   distance=data['distance'],
                   time=convert_time,
