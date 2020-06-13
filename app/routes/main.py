@@ -23,19 +23,11 @@ def get_my_routes(user_id):
 @bp.route('/users/<user_id>/latest_route')
 @cross_origin(headers=["Content-Type", "Authorization"])
 def latest_route(user_id):
-    latest = Route.query.filter(Route.creatorId == user_id).order_by(Route.id.desc()).first()
-    empty_route = Route(
-        distance=None,
-        average_time=None,
-        best_time=None,
-        total_number_of_runs=None,
-        coordinates=None,
-        creatorId=None,
-        directions=None
-    )
+    latest = Route.query.filter(
+        Route.creatorId == user_id).order_by(Route.id.desc()).first()
     if latest:
         return jsonify(latest.to_dict())
-    return jsonify(empty_route)
+    return jsonify('empty_route')
 
 
 @bp.route('/routes', methods=['POST'])
@@ -49,7 +41,9 @@ def post_route():
         total_number_of_runs=0,
         coordinates=data['coordinates'],
         creatorId=data['creatorId'],
-        directions=data['directions']
+        directions=data['directions'],
+        name=data['name'],
+        image=data['image']
     )
     db.session.add(new_route)
     db.session.commit()
