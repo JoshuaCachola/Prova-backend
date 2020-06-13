@@ -232,10 +232,16 @@
         },
         "rsa": {
             "hashes": [
+
                 "sha256:4afbaaecc3e9550c7351fdf0ab3fea1857ff616b85bab59215f00fb42e0e9582",
                 "sha256:5d95293bbd0fbee1dd9cb4b72d27b723942eb50584abc8c4f5f00e4bcfa55307"
             ],
             "version": "==4.4"
+
+                "sha256:aaefa4b84752e3e99bd8333a2e1e3e7a7da64614042bd66f775573424370108a"
+            ],
+            "version": "==4.2"
+
         },
         "six": {
             "hashes": [
