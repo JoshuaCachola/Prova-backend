@@ -57,8 +57,7 @@ def get_runs(user_id):
 def add_run(user_id):
     data = request.json
     time = data['time'].split("'")
-    convert_time = (int(time[0]) * 60) + int(time[1]
-                                             ) if time.length > 1 else int(time[0] * 60)
+    convert_time = (int(time[0]) * 60) + int(time[1]) if len(time) > 1 else int(time[0] * 60)  # noqa
     new_run = Run(date=data['date'],
                   distance=data['distance'],
                   time=convert_time,
@@ -103,5 +102,5 @@ def add_run(user_id):
     db.session.add(personal_route_stats)
 
     db.session.commit()
-    new_run = new_run.to_dict()
-    return new_run
+    # new_run = new_run.to_dict()
+    # return new_run
