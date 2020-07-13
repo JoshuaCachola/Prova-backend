@@ -60,7 +60,22 @@ class Route(db.Model):
             'total_number_of_runs': self.total_number_of_runs,
             'creatorId': self.creatorId,
             'directions': self.directions,
-            'image': self.image
+            'image': self.image,
+        }
+
+    def to_dict_join(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'distance': self.distance,
+            'average_time': self.average_time,
+            'best_time': self.best_time,
+            'coordinates': self.coordinates,
+            'total_number_of_runs': self.total_number_of_runs,
+            'creatorId': self.creatorId,
+            'directions': self.directions,
+            'image': self.image,
+            'personal_route_stats': [personal_route_stat.to_dict() for personal_route_stat in self.personal_route_stats]
         }
 
 
@@ -110,5 +125,6 @@ class PersonalRouteStat(db.Model):
             'average_time': self.average_time,
             'number_of_runs': self.number_of_runs,
             'user_id': self.user_id,
-            'route_id': self.route_id
+            'route_id': self.route_id,
+            'route': self.route.to_dict()
         }
