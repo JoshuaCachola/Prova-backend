@@ -76,27 +76,45 @@ def get_a_route(route_id):
     #     return jsonify(route.to_dict(), new_personal_stats_entry.to_dict(), runs)
 
 
-@bp.route('/personalroutestats/<user_id>', methods=['GET'])
+@bp.route('/personalroutestats/<user_id>', methods=['PUT'])
 @cross_origin(headers=["Content-Type", "Authorization"])
-def get_routes(user_id):
+def other_routes(user_id):
+    data = request.json
+
+    compare_id = None
+
+    if 'highestOtherRouteId' in data.keys():
+        compare_id = data['highestOtherRouteId']
 
     routes = Route.query.join(PersonalRouteStat).filter(
         Route.creatorId != user_id).all()
 
-    # There has to be a better way to do this
+    # Of the routes not created by user, find the ones the user hasn't already saved
     filtered_routes = []
     for route in routes:
         found_user_id = False
         for personal in route.personal_route_stats:
             if str(personal.user_id) == user_id:
-                print('personal.user_id == user_id')
                 found_user_id = True
         if not found_user_id:
             filtered_routes.append(route)
 
-    dict_routes = [route.to_dict_join() for route in filtered_routes]
+    filtered_routes = sorted(filtered_routes, key=lambda route: route.id)
 
-    return jsonify(dict_routes)
+    # Of the unsaved routes, find the next five to display
+    five_routes = []
+    if not compare_id:
+        five_routes = filtered_routes[:5]
+    else:
+        for route in filtered_routes:
+            if route.id > compare_id:
+                five_routes.append(route)
+                if len(five_routes) == 5:
+                    break
+
+    dict_routes = [route.to_dict_join() for route in five_routes]
+
+    return jsonify(dict_routes, {'total_routes': len(filtered_routes)})
 
 
 @bp.route('/routes/<route_id>/users/<user_id>/personalroutestats', methods=['POST'])
