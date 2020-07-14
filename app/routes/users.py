@@ -105,3 +105,15 @@ def add_run(user_id):
     db.session.commit()
     # new_run = new_run.to_dict()
     # return new_run
+
+
+@bp.route('/users/<int:user_id>/runs/<int:run_id>', methods=['PUT'])
+def update_rating(user_id, run_id):
+    data = request.json
+    if data:
+        run = Run.query.filter_by(id=run_id).first()
+        run.rating = data['rating']
+        db.session.commit()
+        return jsonify(**run.to_dict())
+    else:
+        return jsonify({'error': 'Cannot update rating'})

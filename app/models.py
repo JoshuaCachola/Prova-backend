@@ -13,12 +13,12 @@ class Run(db.Model):
     calories = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     route_id = db.Column(db.Integer, db.ForeignKey('routes.id'))
+    rating = db.Column(db.Integer)
 
     users = db.relationship('User', back_populates='runs')
     routes = db.relationship('Route', back_populates='runs')
 
     def to_dict(self):
-        print(self.routes)
         return {
             'id': self.id,
             'distance': self.distance,
@@ -27,6 +27,7 @@ class Run(db.Model):
             'calories': self.calories,
             'user_id': self.user_id,
             'route_id': self.route_id,
+            'rating': self.rating,
             'name': self.routes.name,
             'static_map': self.routes.image,
             'average_time': self.routes.average_time,
