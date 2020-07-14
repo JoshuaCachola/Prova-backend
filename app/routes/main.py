@@ -15,7 +15,8 @@ def main_page():
 @bp.route('/users/<user_id>/routes')
 @cross_origin(headers=["Content-Type", "Authorization"])
 def get_my_routes(user_id):
-    my_routes = Route.query.filter(Route.creatorId == user_id).all()
+    my_routes = PersonalRouteStat.query.join(Route).filter(
+        PersonalRouteStat.user_id == user_id)
     dict_routes = [route.to_dict() for route in my_routes]
     return jsonify(dict_routes)
 
@@ -47,7 +48,7 @@ def post_route():
     )
     db.session.add(new_route)
     db.session.commit()
-    return jsonify(data)
+    return jsonify(new_route.to_dict())
 
 
 @bp.route('/routes/<route_id>', methods=['PUT'])
@@ -60,16 +61,73 @@ def get_a_route(route_id):
     runs = [run.to_dict() for run in runs_for_route]
     personal_stats_entry = PersonalRouteStat.query.filter(
         and_(PersonalRouteStat.route_id == route_id, PersonalRouteStat.user_id == user_id)).first()
-    if personal_stats_entry:
-        return jsonify(route.to_dict(), personal_stats_entry.to_dict(), runs)
+    # if personal_stats_entry:
+    return jsonify(route.to_dict(), personal_stats_entry.to_dict(), runs)
+    # else:
+    #     new_personal_stats_entry = PersonalRouteStat(
+    #         route_id=route_id,
+    #         user_id=user_id,
+    #         best_time=None,
+    #         average_time=None,
+    #         number_of_runs=0
+    #     )
+    #     db.session.add(new_personal_stats_entry)
+    #     db.session.commit()
+    #     return jsonify(route.to_dict(), new_personal_stats_entry.to_dict(), runs)
+
+
+@bp.route('/personalroutestats/<user_id>', methods=['PUT'])
+@cross_origin(headers=["Content-Type", "Authorization"])
+def other_routes(user_id):
+    data = request.json
+
+    compare_id = None
+
+    if 'highestOtherRouteId' in data.keys():
+        compare_id = data['highestOtherRouteId']
+
+    routes = Route.query.join(PersonalRouteStat).filter(
+        Route.creatorId != user_id).all()
+
+    # Of the routes not created by user, find the ones the user hasn't already saved
+    filtered_routes = []
+    for route in routes:
+        found_user_id = False
+        for personal in route.personal_route_stats:
+            if str(personal.user_id) == user_id:
+                found_user_id = True
+        if not found_user_id:
+            filtered_routes.append(route)
+
+    filtered_routes = sorted(filtered_routes, key=lambda route: route.id)
+
+    # Of the unsaved routes, find the next five to display
+    five_routes = []
+    if not compare_id:
+        five_routes = filtered_routes[:5]
     else:
-        new_personal_stats_entry = PersonalRouteStat(
-            route_id=route_id,
-            user_id=user_id,
-            best_time=None,
-            average_time=None,
-            number_of_runs=0
-        )
-        db.session.add(new_personal_stats_entry)
-        db.session.commit()
-        return jsonify(route.to_dict(), new_personal_stats_entry.to_dict(), runs)
+        for route in filtered_routes:
+            if route.id > compare_id:
+                five_routes.append(route)
+                if len(five_routes) == 5:
+                    break
+
+    dict_routes = [route.to_dict_join() for route in five_routes]
+
+    return jsonify(dict_routes, {'total_routes': len(filtered_routes)})
+
+
+@bp.route('/routes/<route_id>/users/<user_id>/personalroutestats', methods=['POST'])
+@cross_origin(headers=["Content-Type", "Authorization"])
+def add_route_to_user(route_id, user_id):
+    # data = request.json
+    new_personal_stats_entry = PersonalRouteStat(
+        route_id=route_id,
+        user_id=user_id,
+        best_time=None,
+        average_time=None,
+        number_of_runs=0
+    )
+    db.session.add(new_personal_stats_entry)
+    db.session.commit()
+    return jsonify('success')
