@@ -1,8 +1,8 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from sqlalchemy import and_
 from ..models import db, Route, PersonalRouteStat, Run
 from flask_cors import cross_origin
-from flask import Blueprint, jsonify, request
+
 
 bp = Blueprint('main', __name__, url_prefix='')
 

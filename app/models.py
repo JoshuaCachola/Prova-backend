@@ -18,6 +18,7 @@ class Run(db.Model):
     routes = db.relationship('Route', back_populates='runs')
 
     def to_dict(self):
+        print(self.routes)
         return {
             'id': self.id,
             'distance': self.distance,
@@ -25,7 +26,11 @@ class Run(db.Model):
             'date': self.date,
             'calories': self.calories,
             'user_id': self.user_id,
-            'route_id': self.route_id
+            'route_id': self.route_id,
+            'name': self.routes.name,
+            'static_map': self.routes.image,
+            'average_time': self.routes.average_time,
+            'best_time': self.routes.best_time
         }
 
 

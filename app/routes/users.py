@@ -47,13 +47,14 @@ def create_user():
 @bp.route('/users/<int:user_id>/runs')
 @cross_origin(headers=['Content-Type', 'Authorization'])
 def get_runs(user_id):
-    queried_runs = Run.query.filter_by(user_id=user_id).order_by(Run.date)
+    queried_runs = Run.query.filter_by(user_id=user_id) \
+                            .order_by(Run.date)
     runs = [run.to_dict() for run in queried_runs]
     return jsonify(runs)
 
 
-@bp.route('/users/<int:user_id>/runs', methods=['POST'])
-@cross_origin(headers=['Content-Type', 'Authorization'])
+@ bp.route('/users/<int:user_id>/runs', methods=['POST'])
+@ cross_origin(headers=['Content-Type', 'Authorization'])
 def add_run(user_id):
     data = request.json
     time = data['time'].split("'")

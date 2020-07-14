@@ -7,8 +7,6 @@ from .models import db, Run, Route, User, PersonalRouteStat
 from .auth import AuthError, requires_auth
 
 
-
-
 app = Flask(__name__)
 app.config.from_object(Configuration)
 app.register_blueprint(main.bp)
@@ -42,6 +40,3 @@ def public():
 def private():
     response = "Hello from a private endpoint! You need to be authenticated to see this."
     return jsonify(message=response)
-
-
-
