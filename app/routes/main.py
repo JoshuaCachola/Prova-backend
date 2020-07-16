@@ -61,19 +61,8 @@ def get_a_route(route_id):
     runs = [run.to_dict() for run in runs_for_route]
     personal_stats_entry = PersonalRouteStat.query.filter(
         and_(PersonalRouteStat.route_id == route_id, PersonalRouteStat.user_id == user_id)).first()
-    # if personal_stats_entry:
+
     return jsonify(route.to_dict(), personal_stats_entry.to_dict(), runs)
-    # else:
-    #     new_personal_stats_entry = PersonalRouteStat(
-    #         route_id=route_id,
-    #         user_id=user_id,
-    #         best_time=None,
-    #         average_time=None,
-    #         number_of_runs=0
-    #     )
-    #     db.session.add(new_personal_stats_entry)
-    #     db.session.commit()
-    #     return jsonify(route.to_dict(), new_personal_stats_entry.to_dict(), runs)
 
 
 @bp.route('/personalroutestats/<user_id>', methods=['PUT'])
@@ -120,7 +109,6 @@ def other_routes(user_id):
 @bp.route('/routes/<route_id>/users/<user_id>/personalroutestats', methods=['POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
 def add_route_to_user(route_id, user_id):
-    # data = request.json
     new_personal_stats_entry = PersonalRouteStat(
         route_id=route_id,
         user_id=user_id,
@@ -131,3 +119,13 @@ def add_route_to_user(route_id, user_id):
     db.session.add(new_personal_stats_entry)
     db.session.commit()
     return jsonify('success')
+
+
+@bp.route('/routes/<route_id>/users/<user_id>/personalroutestats', methods=['DELETE'])
+@cross_origin(headers=["Content-Type", "Authorization"])
+def remove_route_from_user(route_id, user_id):
+    personal_stats_entry = PersonalRouteStat.query.filter(
+        and_(PersonalRouteStat.route_id == route_id, PersonalRouteStat.user_id == user_id)).first()
+    db.session.delete(personal_stats_entry)
+    db.session.commit()
+    return jsonify('deleted')
