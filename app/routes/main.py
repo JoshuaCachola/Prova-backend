@@ -75,20 +75,20 @@ def other_routes(user_id):
     if 'highestOtherRouteId' in data.keys():
         compare_id = data['highestOtherRouteId']
 
-    routes = Route.query.join(PersonalRouteStat).filter(
-        Route.creatorId != user_id).all()
+    # Find the routes already joined by the user
+    already_joined_routes = PersonalRouteStat.query.filter(
+        PersonalRouteStat.user_id == user_id).all()
 
-    # Of the routes not created by user, find the ones the user hasn't already saved
-    filtered_routes = []
-    for route in routes:
-        found_user_id = False
-        for personal in route.personal_route_stats:
-            if str(personal.user_id) == user_id:
-                found_user_id = True
-        if not found_user_id:
-            filtered_routes.append(route)
+    # Store the already joined route IDs in a set
+    already_joined_route_ids = {
+        personal_route.route_id for personal_route in already_joined_routes}
 
-    filtered_routes = sorted(filtered_routes, key=lambda route: route.id)
+    # Find the routes the user hasn't already saved by comparing already joined routes to all routes
+    filtered_routes = [
+        route for route in Route.query.all() if route.id not in already_joined_route_ids]
+
+    # Sort routes by ID
+    filtered_routes.sort(key=lambda route: route.id)
 
     # Of the unsaved routes, find the next five to display
     five_routes = []
